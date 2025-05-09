@@ -1,0 +1,69 @@
+def print_board(board):
+    print(board[1] + " |" + board[2] + " |" + board[3])
+    print("--+--+--")
+    print(board[4] + " |" + board[5] + " |" + board[6])
+    print("--+--+--")
+    print(board[7] + " |" + board[8] + " |" + board[9])
+    print("\n")
+
+def free_space(position):
+    if board[position] == " ":
+        return True
+    else:
+        return False
+
+def insert_letter(letter,position):
+    if free_space(position):
+        board[position] = letter
+        print_board(board)
+        if check_draw():
+            print("Draw")
+            exit()
+        if check_win(letter):
+            print(letter ,"wins the game")
+            quit()
+        return
+    else:
+        print("You cannot insert here.")
+        position = int(input("Please enter a new position: "))
+        insert_letter(letter,position)
+        return
+
+def check_draw():
+    for key in board.keys():
+        if board[key] == " ":
+            return False
+    return True
+
+def check_win(mark):
+    if board[1] == board[2] and board[1] == board[3] and board[1] == mark:
+        return True
+    elif board[4] == board[5] and board[4] == board[6] and board[4] == mark:
+        return True
+    elif board[7] == board[8] and board[7] == board[9] and board[7] == mark:
+        return True
+    elif board[1] == board[4] and board[1] == board[7] and board[1] == mark:
+        return True
+    elif board[2] == board[5] and board[2] == board[8] and board[2] == mark:
+        return True
+    elif board[3] == board[6] and board[3] == board[9] and board[3] == mark:
+        return True
+    elif board[1] == board[5] and board[1] == board[9] and board[1] == mark:
+        return True
+    elif board[3] == board[5] and board[3] == board[7] and board[3] == mark:
+        return True
+    else:
+        return False
+
+def player_move(player):
+    position = int(input("enter the position: "))
+    insert_letter(player,position)
+    return
+
+board = {1:" ", 2: " ", 3:" ", 4:" ", 5:" ", 6:" ", 7:" ", 8:" ", 9:" "}
+print_board(board)
+first = "X"
+second = "O"
+while not check_win(first) and not check_win(second):
+    player_move(first)
+    player_move(second)
