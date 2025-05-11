@@ -79,8 +79,10 @@ class ResizableBackgroundApp:
         button_size = min(width, height) * 0.07  # square size
         spacing_x = width / 5
         spacing_y = height / 6
-        start_x = (width - (spacing_x * 3)) / 2
-        start_y = height * 0.2
+
+        # Shift grid a little more to the left for better alignment with centered buttons
+        start_x = (width - (spacing_x * 3)) / 2 - spacing_x * 0.1  # Adjust this offset
+        start_y = height * 0.25  # Slightly lower position
 
         for idx in range(14):
             row = idx // 4
@@ -90,12 +92,17 @@ class ResizableBackgroundApp:
                 x = start_x + col * spacing_x
                 y = start_y + row * spacing_y
             else:
-                center_offset = spacing_x / 2 + (idx - 12) * spacing_x
-                x = (width - spacing_x) + center_offset - button_size / 2
+                # Place buttons 13 and 14 centered under the grid
+                offset = spacing_x * 0.6  # Match this with the centered offset you liked
+                if idx == 12:
+                    x = (width / 2) - offset - (button_size / 2)
+                else:  # idx == 13
+                    x = (width / 2) + offset - (button_size / 2)
                 y = start_y + 3 * spacing_y
 
             self.canvas.coords(self.button_ids[idx], x, y)
             self.canvas.itemconfig(self.button_ids[idx], width=button_size, height=button_size)
+
 
     def show_page(self, index):
         # Hide the canvas (buttons) when a page is shown
@@ -123,5 +130,5 @@ class ResizableBackgroundApp:
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("900x600")
-    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with the img path when u put the bg into the compiler
+    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with the image path in the compiler
     root.mainloop()
