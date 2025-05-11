@@ -9,24 +9,24 @@ class ResizableBackgroundApp:
         # Load the background image
         self.ogImg = Image.open(image_path)
 
-        # Create a frame to contain the buttons (canvas)
+        # Frame that holds the canvas
         self.canvas_frame = tk.Frame(root)
-        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
+        self.canvas_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        # Create the canvas for the buttons and background image
+        # Canvas for displaying background and buttons
         self.canvas = tk.Canvas(self.canvas_frame, highlightthickness=0, bd=0)
-        self.canvas.pack(fill=tk.BOTH, expand=True)
+        self.canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
 
         self.bgImg = None
-        self.update_background()
+        self.update_background()  # Load and show initial background image
 
-        # Create the buttons
+        # Create 14 buttons
         self.buttons = []
         self.button_ids = []
         for i in range(14):
             btn = tk.Button(
                 text=f"App {i + 1}",
-                command=lambda i=i: self.show_page(i),
+                command=lambda i=i: self.show_page(i),  # Open the corresponding app page
                 relief=tk.FLAT,
                 bg="#f0f0f0",
                 fg="black",
@@ -35,25 +35,28 @@ class ResizableBackgroundApp:
                 bd=0
             )
             self.buttons.append(btn)
+            # Embed the button into the canvas
             btn_id = self.canvas.create_window(0, 0, window=btn, anchor='nw')
             self.button_ids.append(btn_id)
 
-        # Create frames (pages) for each app
+        # Create one page/frame per app
         self.pages = {}
         for i in range(14):
             frame = tk.Frame(self.root, bg="white")
             label = tk.Label(frame, text=f"This is App {i+1}", font=("Arial", 24))
             label.pack(expand=True)
 
-            # Create a close button for each frame
-            close_btn = tk.Button(frame, text="Close", command=lambda: self.close_page())
+            # Close button that resets the app
+            close_btn = tk.Button(frame, text="Close", command=self.close_page)
             close_btn.pack(side="bottom", pady=10)
 
             self.pages[i] = frame
 
+        # Track resizing
         self.root.bind("<Configure>", self.on_resize)
 
     def update_background(self):
+        # Resize and display the background image to match window size
         width = self.root.winfo_width()
         height = self.root.winfo_height()
 
@@ -66,69 +69,67 @@ class ResizableBackgroundApp:
             else:
                 self.bgImg = self.canvas.create_image(0, 0, image=self.bg_image, anchor='nw')
 
-            self.canvas.tag_lower(self.bgImg)  # Ensure the background stays at the bottom
+            self.canvas.tag_lower(self.bgImg)  # Ensure the image stays behind all widgets
 
     def on_resize(self, event):
         self.update_background()
         self.update_buttons()
 
     def update_buttons(self):
+        # Dynamically calculate button layout based on window size
         width = self.root.winfo_width()
         height = self.root.winfo_height()
 
-        button_size = min(width, height) * 0.07  # square size
-        spacing_x = width / 5
-        spacing_y = height / 6
+        button_size = min(width, height) * 0.1  # Button width/height
+        spacing_x = width / 5                   # Horizontal spacing between buttons
+        spacing_y = height / 5.5                  # Vertical spacing between buttons
 
-        # Shift grid a little more to the left for better alignment with centered buttons
-        start_x = (width - (spacing_x * 3)) / 2 - spacing_x * 0.1  # Adjust this offset
-        start_y = height * 0.25  # Slightly lower position
+        start_x = (width / 2) - ((spacing_x * 3) / 2) -30  # Center-align 4-column grid
+        start_y = (height * 0.25) + 10                        # Y-start position for first row
 
         for idx in range(14):
             row = idx // 4
             col = idx % 4
 
             if idx < 12:
+                # Grid layout for first 12 buttons (3 rows x 4 columns)
                 x = start_x + col * spacing_x
                 y = start_y + row * spacing_y
             else:
-                # Place buttons 13 and 14 centered under the grid
-                offset = spacing_x * 0.6  # Match this with the centered offset you liked
+                # Last 2 buttons: centered under the grid
+                offset = spacing_x * 0.6
                 if idx == 12:
                     x = (width / 2) - offset - (button_size / 2)
-                else:  # idx == 13
+                else:
                     x = (width / 2) + offset - (button_size / 2)
                 y = start_y + 3 * spacing_y
 
+            # Set position and size of each canvas-embedded button
             self.canvas.coords(self.button_ids[idx], x, y)
             self.canvas.itemconfig(self.button_ids[idx], width=button_size, height=button_size)
 
-
     def show_page(self, index):
-        # Hide the canvas (buttons) when a page is shown
-        self.canvas_frame.pack_forget()
+        # Hide the homepage buttons/canvas
+        self.canvas_frame.place_forget()
 
-        # Hide all pages first
+        # Hide all pages
         for frame in self.pages.values():
             frame.place_forget()
 
-        # Show the selected page
+        # Show the selected app page
         frame = self.pages[index]
         frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
 
     def close_page(self):
-        # Hide the current page
-        for frame in self.pages.values():
-            frame.place_forget()
+        # Close current page and restart the app
+        self.root.destroy()
+        main()  # Restart the program (see main() below)
 
-        # Re-show the buttons canvas by packing it back
-        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Bring the canvas frame to the front
-        self.canvas_frame.tkraise()
+def main():
+    root = tk.Tk()
+    root.geometry("900x600")  # Initial window size
+    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with your image
+    root.mainloop()
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("900x600")
-    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with the image path in the compiler
-    root.mainloop()
+    main()
