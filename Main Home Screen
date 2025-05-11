@@ -1,34 +1,127 @@
-from tkinter import *
+import tkinter as tk
 from PIL import Image, ImageTk
 
-#------------------------------------------------| BG |------------------------------------------------------------------#
+class ResizableBackgroundApp:
+    def __init__(self, root, image_path):
+        self.root = root
+        self.root.title("The Proj")
 
-root = Tk()
-bg = Image.open("homepage.png")
-photo_image = ImageTk.PhotoImage(bg)
+        # Load the background image
+        self.ogImg = Image.open(image_path)
 
-label = Label(root, image=photo_image)
-label.image = photo_image  
-label.place(x=0, y=0, relwidth=1, relheight=1) 
-root.mainloop()
+        # Create a frame to contain the buttons (canvas)
+        self.canvas_frame = tk.Frame(root)
+        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
 
-#------------------------------------------------| MAIN |------------------------------------------------------------------#
+        # Create the canvas for the buttons and background image
+        self.canvas = tk.Canvas(self.canvas_frame, highlightthickness=0, bd=0)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
 
+        self.bgImg = None
+        self.update_background()
 
-one = Button(root, text = 'Tic Tac Toe', command  = )
-two = Button(root, text = 'Matching/Memory', command  = )
-three = Button(root, text = 'Hangman', command  = )
-four = Button(root, text = 'Connect 4(2p)', command  = )
-five = Button(root, text = 'Rock Paper Scissors', command  = )
-six = Button(root, text = 'Minesweeper', command  = )
-seven = Button(root, text = 'Battle Sim(turns)', command  = )
-eight = Button(root, text = '', command  = )
-nine = Button(root, text = '', command  = )
-ten = Button(root, text = '', command  = )
-eleven = Button(root, text = '', command  = )
-twelve = Button(root, text = '', command  = )
-thirteen = Button(root, text = '', command  = )
-fourteen = Button(root, text = '', command  = )
-fifteen = Button(root, text = '', command  = )
-sixteen = Button(root, text = '', command  = )
-seventeen = Button(root, text = '', command  = )
+        # Create the buttons
+        self.buttons = []
+        self.button_ids = []
+        for i in range(14):
+            btn = tk.Button(
+                text=f"App {i + 1}",
+                command=lambda i=i: self.show_page(i),
+                relief=tk.FLAT,
+                bg="#f0f0f0",
+                fg="black",
+                activebackground="#e0e0e0",
+                activeforeground="black",
+                bd=0
+            )
+            self.buttons.append(btn)
+            btn_id = self.canvas.create_window(0, 0, window=btn, anchor='nw')
+            self.button_ids.append(btn_id)
+
+        # Create frames (pages) for each app
+        self.pages = {}
+        for i in range(14):
+            frame = tk.Frame(self.root, bg="white")
+            label = tk.Label(frame, text=f"This is App {i+1}", font=("Arial", 24))
+            label.pack(expand=True)
+
+            # Create a close button for each frame
+            close_btn = tk.Button(frame, text="Close", command=lambda: self.close_page())
+            close_btn.pack(side="bottom", pady=10)
+
+            self.pages[i] = frame
+
+        self.root.bind("<Configure>", self.on_resize)
+
+    def update_background(self):
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        if width > 1 and height > 1:
+            resized_image = self.ogImg.resize((width, height), Image.LANCZOS)
+            self.bg_image = ImageTk.PhotoImage(resized_image)
+
+            if self.bgImg:
+                self.canvas.itemconfig(self.bgImg, image=self.bg_image)
+            else:
+                self.bgImg = self.canvas.create_image(0, 0, image=self.bg_image, anchor='nw')
+
+            self.canvas.tag_lower(self.bgImg)  # Ensure the background stays at the bottom
+
+    def on_resize(self, event):
+        self.update_background()
+        self.update_buttons()
+
+    def update_buttons(self):
+        width = self.root.winfo_width()
+        height = self.root.winfo_height()
+
+        button_size = min(width, height) * 0.07  # square size
+        spacing_x = width / 5
+        spacing_y = height / 6
+        start_x = (width - (spacing_x * 3)) / 2
+        start_y = height * 0.2
+
+        for idx in range(14):
+            row = idx // 4
+            col = idx % 4
+
+            if idx < 12:
+                x = start_x + col * spacing_x
+                y = start_y + row * spacing_y
+            else:
+                center_offset = spacing_x / 2 + (idx - 12) * spacing_x
+                x = (width - spacing_x) + center_offset - button_size / 2
+                y = start_y + 3 * spacing_y
+
+            self.canvas.coords(self.button_ids[idx], x, y)
+            self.canvas.itemconfig(self.button_ids[idx], width=button_size, height=button_size)
+
+    def show_page(self, index):
+        # Hide the canvas (buttons) when a page is shown
+        self.canvas_frame.pack_forget()
+
+        # Hide all pages first
+        for frame in self.pages.values():
+            frame.place_forget()
+
+        # Show the selected page
+        frame = self.pages[index]
+        frame.place(relx=0.1, rely=0.1, relwidth=0.8, relheight=0.8)
+
+    def close_page(self):
+        # Hide the current page
+        for frame in self.pages.values():
+            frame.place_forget()
+
+        # Re-show the buttons canvas by packing it back
+        self.canvas_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Bring the canvas frame to the front
+        self.canvas_frame.tkraise()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("900x600")
+    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with your actual image path
+    root.mainloop()
