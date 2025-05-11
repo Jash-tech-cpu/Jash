@@ -123,5 +123,5 @@ class ResizableBackgroundApp:
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("900x600")
-    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with your actual image path
+    app = ResizableBackgroundApp(root, "homeframe.png")  # Replace with the img path when u put the bg into the compiler
     root.mainloop()
