@@ -1,0 +1,8 @@
+print("Calculator")
+while True:
+  user_choice = int(input("Options:\n1. Addition\n2. Subtraction\n3. Multiplication\n4. Division\n")
+  if user_choice == 1:
+    amount = int(input("How many numbers are being added: ")
+    for i in range(amount):
+      numbers = int(input
+  
