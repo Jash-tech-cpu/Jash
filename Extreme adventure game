@@ -2,10 +2,17 @@ print("This is the extreme adventure game, must complete in one run, that why it
 username = input("What is your name? ")
 print("Hi", username, "today we will be going on an epic adventure, so get ready and choose some items from your abode to accompany you in the journey.")
 item_count = int(input("How many items would you like to take on your journey? "))
+if item_count > 10:
+    print("The weight of the items crushed you\nCRUSHED ENDING!")
 for i in range(item_count):
     item = input("Enter your item: ")
-location_choice = int(input("Would you rather go to the nearby school or the nearby mall\n1. School\n2. Mall"))
+location_choice = int(input("Would you rather go to the nearby school or the nearby mall? \n1. School\n2. Mall\n"))
 if location_choice == 1:
-    location_choice_2 = print("You broke the front window of your school and a pieace of the window stabbed you in throat\nWINDOW ENDING!")
-
-
+    print("You broke the front window of your school and a piece of the window stabbed you in throat\nWINDOW ENDING!")
+elif location_choice == 2:
+    location_choice_1 = int(input("Which store would you like to enter? \n1. Technology Store\n2. Clothing Store\n"))
+    if location_choice_1 == 1:
+        print("A TV from the store fell over and crushed your skull\nTV ENDING!")
+    elif location_choice_1 == 2:
+        location_choice_2 = int(input("You were picking out some nice clothes and accidentally stumbled upon a secret door. Would you rather go inside and check it out or go back into the mall to get some food? \n1. Secret door\n2. Food court\n"))
+        
