@@ -1,28 +1,50 @@
 print("Calculator")
 while True:
-  user_choice = int(input("Options:\n1. Addition\n2. Subtraction\n3. Multiplication\n4. Division\n5. Exit\n")
-  if user_choice == 1:
-    amount = int(input("How many numbers are being added: ")
-    for i in range(amount):
-      numbers = int(input("Enter a number: ")
-    for i in numbers:
-  elif user_choice == 2:
-    amount_1 = int(input("How many numbers are being subtracted: ")
-    for i in range(amount_1):
-      numbers_1 = int(input("Enter a number: ")
-    for i in numbers_1:
-  elif user_choice == 3:
-    amount_2 = int(input("How many numbers are being multiplied: ")
-    for i in range(amount_2):
-      numbers_2 = int(input("Enter a number: ")
-    for i in numbers_2:
-  elif user_choice == 4:
-    amount_3 = int(input("How many numbers are being divided: ")
-    for i in range(amount_3):
-      numbers_3 = int(input("Enter a number: ")
-    for i in numbers_3:
-  elif user_choice == 5:
-    break
-  else:
-    print("Input is incorrect, please try again")
-  
+    choice = int(input("Options:\n1. Addition\n2. Subtraction\n3. Multiplication\n4. Division\n5. Exit\n"))
+
+    if choice == 1:
+        amount = int(input("How many numbers are being added: "))
+        nums = []
+        for i in range(amount):
+            num = int(input(f"Enter number {i+1}: "))
+            nums.append(num)
+        numsum = sum(nums)
+        print(f'The sum is: {numsum}')
+
+
+    if choice == 2:
+        amount = int(input("How many numbers are being subtracted(including the start num): "))
+        start = int(input("Enter the number you're subtracting from: "))
+        nums = []
+        for i in range(amount-1):
+            num = int(input(f"Enter num {i+1}: "))
+            nums.append(num)
+        numsum = sum(nums)
+        print(f'The difference is: {start-numsum}')
+
+    if choice == 3:
+        nums = []
+        for i in range(amount):
+            num = int(input(f"Enter number {i+1}: "))
+            nums.append(num)
+        def multi(list):
+            product = 1
+            for element in list:
+                product *= element
+            return product
+        product = multi(nums)
+        print(f'The product is is: {product}')
+
+
+
+    if choice == 4:
+        dividend = int(input("Enter the dividend(number you're dividing from): "))
+        divisor = int(input("Enter the divisor(number you're dividing with: "))
+        print(f'The quotient is is: {dividend / divisor}')
+        4
+    if choice == 5:
+        print("Come again!")
+        break
+    if choice not in range(1,5):
+        print("Input is incorrect, please try again")
+
